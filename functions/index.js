@@ -1,22 +1,25 @@
-const express = require('express')
+// index.js
+const functions = require("firebase-functions");
+// Expressの読み込み
+const express = require("express");
 const cors = require('cors')
 
-const app = express()
+const app = express();
 app.use(cors())
 
 //公文書館のデータをまとめたもの
 const config = require('./config.json')
 
-app.get('/na/iiif/:id', (_req, res) => {
+app.get('/iiif-img/:id', (_req, res) => {
   const url =
-    _req.protocol + '://' + _req.get('host') + _req.originalUrl + '/info.json'
+    _req.protocol + '://' + _req.get('host') + "/api" + _req.originalUrl + '/info.json'
   res.writeHead(302, {
     Location: url,
   })
   res.end()
 })
 
-app.get('/na/iiif/:id/info.json', (_req, res) => {
+app.get('/iiif-img/:id/info.json', (_req, res) => {
   const id = _req.params.id
   
   //設定ファイルに含まれていない場合
@@ -36,7 +39,7 @@ app.get('/na/iiif/:id/info.json', (_req, res) => {
     '@id':
       _req.protocol +
       '://' +
-      _req.get('host') +
+      _req.get('host') + "/api" + 
       _req.originalUrl.replace('/info.json', ''),
     height,
     profile: [
@@ -94,7 +97,7 @@ app.get('/na/iiif/:id/info.json', (_req, res) => {
   return res.json(info)
 })
 
-app.get('/na/iiif/:id/:region/:size/:rotaion/default.jpg', (_req, res) => {
+app.get('/iiif-img/:id/:region/:size/:rotaion/default.jpg', (_req, res) => {
   const params = _req.params
   const id = params.id
   const region = params.region
@@ -158,10 +161,7 @@ app.get('/na/iiif/:id/:region/:size/:rotaion/default.jpg', (_req, res) => {
   res.end()
 })
 
-const port = '3001'
-app.listen(port, () => {
-  // eslint-disable-next-line
-  console.log(`app start listening on port ${port}`)
-})
 
-module.exports.handler = serverless(app)
+// 出力
+const api = functions.https.onRequest(app);
+module.exports = { api };
