@@ -10,6 +10,15 @@ app.use(cors())
 //公文書館のデータをまとめたもの
 const config = require('./config.json')
 
+app.get('/', (_req, res) => {
+  const url =
+    _req.protocol + '://' + _req.get('host') + "/api" + _req.originalUrl + '/info.json'
+  res.writeHead(302, {
+    Location: url,
+  })
+  res.end()
+})
+
 app.get('/iiif-img/:id', (_req, res) => {
   const url =
     _req.protocol + '://' + _req.get('host') + "/api" + _req.originalUrl + '/info.json'
@@ -24,7 +33,7 @@ app.get('/iiif-img/:id/info.json', (_req, res) => {
   
   //設定ファイルに含まれていない場合
   if (!config[id]) {
-    return {}
+    return res.json({})
   }
 
   const obj = config[id]
@@ -161,6 +170,11 @@ app.get('/iiif-img/:id/:region/:size/:rotaion/default.jpg', (_req, res) => {
   res.end()
 })
 
+const port = '3001'
+app.listen(port, () => {
+  // eslint-disable-next-line
+  console.log(`app start listening on port ${port}`)
+})
 
 // 出力
 const api = functions.https.onRequest(app);
