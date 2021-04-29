@@ -12,8 +12,8 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@master
       - name: Install Dependencies
-        run: yarn install
+        run: npm run install
       - name: Deploy
-        run: yarn deploy
+        run: npm run deploy
         env:
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
