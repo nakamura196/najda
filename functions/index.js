@@ -9,6 +9,8 @@ const convert = require('xml-js');
 const app = express();
 app.use(cors())
 
+const options = { ignoreComment: true, alwaysChildren: true }
+
 const host = "https://nakamura196.github.io/dzi"
 
 app.get('/', (_req, res) => {
@@ -104,14 +106,14 @@ app.get('/iiif-img/:id/info.json', (_req, res) => {
   return res.json(info)
 })
 
-app.get('/iiif-img2/:id/:region/:size/:rotaion/default.jpg', (_req, res) => {
+app.get('/iiif-img/:id/:region/:size/:rotaion/default.jpg', (_req, res) => {
   const params = _req.params
   const id = params.id
   const region = params.region
   const size = params.size
 
   const data = fs.readFileSync('./data/'+id+'.dzi','utf8')
-  const config = JSON.parse(convert.xml2json(data, { ignoreComment: true, alwaysChildren: true }))
+  const config = JSON.parse(convert.xml2json(data, options))
 
   const image = config.elements[0]
   const sizeInfo = image.elements[0].attributes
